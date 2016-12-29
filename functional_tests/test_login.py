@@ -3,6 +3,8 @@ from django.core import mail
 
 from .base import FunctionalTest
 
+import time
+
 TEST_EMAIL='edith@example.com'
 SUBJECT='Your login link for Superlists'
 
@@ -12,7 +14,7 @@ class LoginTest(FunctionalTest):
         #Edith goes to the awesome superlists site and notices a "Log in" section in the navbar for the first time. It's telling her to enter her email address, so she does.
         self.browser.get(self.server_url)
         self.browser.find_element_by_name('email').send_keys(TEST_EMAIL+'\n')
-
+        
         #A message appears telling her an email has been sent
         body=self.browser.find_element_by_tag_name('body')
         self.assertIn('Check your email', body.text)
