@@ -47,9 +47,9 @@ class MyListsTest(FunctionalTest):
 
         #Under "My lists", her new list appears
         self.browser.find_element_by_link_text("My lists").click()
-        self.browser.find_element_by_name('Click cows').click()
+        self.browser.find_element_by_link_text('Click cows').click()
         self.assertEqual(self.browser.current_url, second_list_url)
 
         #She logs out. The "My lists" option disappears
         self.browser.find_element_by_link_text("Log out").click()
-        self.assertEqual(self.browser.find_element_by_link_text("My lists"), [])
+        self.assertEqual(self.browser.find_elements_by_link_text("My lists"), [])
