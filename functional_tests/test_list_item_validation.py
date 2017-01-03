@@ -15,6 +15,7 @@ class ItemValidationTest(FunctionalTest):
         self.browser.get(self.server_url)
         self.get_item_input_box().send_keys('\n')
 
+
         #The browser intercepts the request and does not load the list page
         self.assertNotIn('Buy milk', self.browser.find_element_by_tag_name('body').text)
 
