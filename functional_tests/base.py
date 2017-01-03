@@ -1,5 +1,8 @@
 #from django.test import LiveServerTestCase
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY, get_user_model
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 import os
@@ -9,6 +12,8 @@ import time
 
 DEFAULT_WAIT=5
 SCREEN_DUMP_LOCATION=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'screendumps')
+
+User=get_user_model()
 
 class FunctionalTest(StaticLiveServerTestCase):
     ###For the staging site
@@ -85,6 +90,21 @@ class FunctionalTest(StaticLiveServerTestCase):
             except (AssertionError, WebDriverException):
                 time.sleep(0.1)
         return function_with_assertion()
+
+    def create_pre_authenticated_session(self, email):
+        user=User.objects.create(email=email)
+        session=SessionStore()
+        session[SESSION_KEY]=user.pk
+        session[BACKEND_SESSION_KEY]=settings.AUTHENTICATION_BACKENDS[0]
+        session.save()
+        ## to set a cookie we need to first visit the domain.
+        ## 404 pages load the quickest!
+        self.browser.get(self.server_url + "/404_no_such_url/")
+        self.browser.add_cookie(dict(
+            name=settings.SESSION_COOKIE_NAME,
+            value=session.session_key,
+            path='/',
+        ))
 
     def check_for_row_in_list_table(self, row_text):
         table=self.browser.find_element_by_id('id_list_table')
