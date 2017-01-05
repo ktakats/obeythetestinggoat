@@ -1,2 +1,4 @@
 *.pyc
 functional_tests/screendumps
+db.sqlite3
+.gitignore

@@ -1,6 +1,7 @@
 from selenium import webdriver
 from .base import FunctionalTest
-from .home_and_list_pages import HomePage
+from .home_and_list_pages import HomePage, ListPage
+import time
 
 def quit_if_possible(browser):
     try:
@@ -18,9 +19,10 @@ class SharingTest(FunctionalTest):
 
         #Her friend Oniciferous is also hanging out on the lists site
         oni_browser=webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
-        self.addCleanup(lambda: quit_if_possible(oni_browser))
         self.browser=oni_browser
         self.create_pre_authenticated_session('oniciferous@example.com')
+        self.addCleanup(lambda: quit_if_possible(oni_browser))
+
 
         #Edith goes to the home page and starts a list
         self.browser=edith_browser
@@ -32,11 +34,13 @@ class SharingTest(FunctionalTest):
 
         #She shares her list
         #The page updates to say that it's shared with Oniciferous
-        list_page.share_list_with('oniciferous@examplse.com')
+
+        list_page.share_list_with('oniciferous@example.com')
 
         #Oniciferous now goes to the lists page with his browser
         self.browser=oni_browser
         HomePage(self).go_to_home_page().go_to_my_lists_page()
+
 
         #He sees Edith's list in there
         self.browser.find_element_by_link_text('Get help').click()
